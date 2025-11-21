@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Multiplayer Chess Game",
+  title: "Chess Game",
   description: "Play chess online with friends in real-time using Socket.IO",
 };
 

@@ -32,7 +32,7 @@ export default function ChessPieceComponent({
                 absolute inset-0 flex items-center justify-center
                 text-5xl md:text-6xl select-none
                 transition-all duration-200
-                ${isDraggable ? 'cursor-pointer hover:scale-110' : 'cursor-not-allowed'}
+                ${isDraggable ? 'cursor-grab hover:scale-110 active:cursor-grabbing' : 'cursor-default'}
                 ${isSelected ? 'scale-110 drop-shadow-2xl' : ''}
             `}
             onClick={() => isDraggable && onPieceClick(position)}
