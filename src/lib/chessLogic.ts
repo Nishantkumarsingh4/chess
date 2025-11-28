@@ -63,7 +63,7 @@ export function isValidMove(
     const targetPiece = getPieceAt(gameState.board, to);
     if (targetPiece && targetPiece.color === piece.color) return false;
 
-    if (!isValidPieceMove(gameState, from, to, piece)) return false;
+    if (!isValidPieceMove(gameState, from, to, piece, false)) return false;
 
     // Check if move would put own king in check (use simple move without checkmate detection)
     const testBoard = makeMoveSimple(gameState.board, from, to, gameState.enPassantTarget);
@@ -110,11 +110,13 @@ function makeMoveSimple(
     return newBoard;
 }
 
+// FIXED: Added skipCastling parameter to prevent infinite recursion
 function isValidPieceMove(
     gameState: GameState,
     from: Position,
     to: Position,
-    piece: ChessPiece
+    piece: ChessPiece,
+    skipCastling: boolean = false  // NEW PARAMETER
 ): boolean {
     switch (piece.type) {
         case 'pawn':
@@ -128,7 +130,7 @@ function isValidPieceMove(
         case 'queen':
             return isValidQueenMove(gameState.board, from, to);
         case 'king':
-            return isValidKingMove(gameState, from, to, piece.color);
+            return isValidKingMove(gameState, from, to, piece.color, skipCastling);  // PASS skipCastling
         default:
             return false;
     }
@@ -194,11 +196,13 @@ function isValidQueenMove(board: Board, from: Position, to: Position): boolean {
     return isValidRookMove(board, from, to) || isValidBishopMove(board, from, to);
 }
 
+// FIXED: Added skipCastling parameter
 function isValidKingMove(
     gameState: GameState,
     from: Position,
     to: Position,
-    color: PieceColor
+    color: PieceColor,
+    skipCastling: boolean = false  // NEW PARAMETER
 ): boolean {
     const rowDiff = Math.abs(to.row - from.row);
     const colDiff = Math.abs(to.col - from.col);
@@ -206,8 +210,8 @@ function isValidKingMove(
     // Normal king move
     if (rowDiff <= 1 && colDiff <= 1) return true;
 
-    // Castling
-    if (rowDiff === 0 && colDiff === 2) {
+    // Castling - SKIP when checking for threats
+    if (!skipCastling && rowDiff === 0 && colDiff === 2) {
         return canCastle(gameState, color, to.col > from.col ? 'kingside' : 'queenside');
     }
 
@@ -390,6 +394,7 @@ function findKing(board: Board, color: PieceColor): Position | null {
     return null;
 }
 
+// FIXED: Now passes skipCastling=true to prevent infinite recursion
 export function isKingInCheck(board: Board, color: PieceColor): boolean {
     const kingPos = findKing(board, color);
     if (!kingPos) return false;
@@ -418,7 +423,8 @@ export function isKingInCheck(board: Board, color: PieceColor): boolean {
                     enPassantTarget: null,
                 };
 
-                if (isValidPieceMove(tempState, from, kingPos, piece)) {
+                // CRITICAL FIX: Pass skipCastling=true to prevent recursion
+                if (isValidPieceMove(tempState, from, kingPos, piece, true)) {
                     return true;
                 }
             }
