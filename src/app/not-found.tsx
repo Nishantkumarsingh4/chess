@@ -104,13 +104,15 @@ export default function NotFound() {
             Looks like this page got lost in the toy box! Let's build you a way back home.
           </p>
           
-          <button
-            onClick={handleJump}
-            className="group bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110 hover:shadow-xl flex items-center gap-3 mx-auto"
-          >
-            <Home className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-            Return Home
-          </button>
+          <a href="/">
+            <button
+              onClick={handleJump}
+              className="group bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110 hover:shadow-xl flex items-center gap-3 mx-auto"
+            >
+              <Home className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+              Return Home
+            </button>
+          </a>
         </div>
 
         {/* LEGO studs decoration */}
